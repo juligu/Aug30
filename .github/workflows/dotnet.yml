@@ -8,11 +8,9 @@ on:
     branches: [ "main" ]
     paths:
       - 'WebApp/**'
-    
-
+      
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -30,7 +28,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Publish package
-      run: dotnet publish -o release -c Release
+      run: dotnet publish -o ./release /p:WebPublishMethod=Package -c Release
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Upload artifact
