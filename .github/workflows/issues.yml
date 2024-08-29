@@ -6,16 +6,25 @@ on:
 jobs:
   add_label:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Install GitHub CLI
-      run: sudo apt-get install gh
-
-    - name: Apply 'new issue' label
-      run: |
-        gh issue edit ${{ github.event.issue.number }} --add-label "new issue"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/github-script@v7
+      id: issue_script
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue_number = context.issue.number
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+            
+          const comment = await github.rest.issues.createComment({
+              repo, owner, issue_number,
+              body: "Thanks for your contribution!"
+            });
+            
+          github.rest.issues.addLabels({
+            repo, owner, issue_number,
+            labels: ['todo-review']
+          })        
