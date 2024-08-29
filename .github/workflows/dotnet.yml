@@ -14,8 +14,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    working-directory: ./WebApp
-    
+
+    defaults:
+      run:
+        working-directory: WebApp
+            
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -35,4 +38,3 @@ jobs:
       with:
         name: drop
         path: ./release
-        name: 
