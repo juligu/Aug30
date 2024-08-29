@@ -1,0 +1,21 @@
+name: IssuesWF
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add_label:
+    runs-on: ubuntu-latests
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install GitHub CLI
+      run: sudo apt-get install gh
+
+    - name: Apply 'new issue' label
+      run: |
+        gh issue edit ${{ github.event.issue.number }} --add-label "new issue"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
