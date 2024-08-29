@@ -8,6 +8,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'WebApp/**'
+      - '.github/workflows/dotnet.yml'
       
 jobs:
   build:
