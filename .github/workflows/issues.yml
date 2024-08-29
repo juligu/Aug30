@@ -5,7 +5,7 @@ on:
 
 jobs:
   add_label:
-    runs-on: ubuntu-latests
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
