@@ -14,7 +14,15 @@ on:
     paths:
       - 'WebApi/**'
       - '.github/workflows/dotnetAPI.yml'
-      
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_WEBAPP_NAME: "webapi-$(github.run_id)"
+  AZURE_WEBAPP_PACKAGE_PATH: './WebApi/release'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -25,6 +33,11 @@ jobs:
             
     steps:
     - uses: actions/checkout@v4
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -43,3 +56,19 @@ jobs:
         name: drop
         path: webapi/release/**
         
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop   
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    - name: logout
+      run: |
+        az logout
